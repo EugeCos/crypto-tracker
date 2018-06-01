@@ -8,6 +8,9 @@ import registerServiceWorker from "./registerServiceWorker";
 // ----------CSS----------
 import "./css/global.css";
 
+/*-------------FONT-AWESOME-------------*/
+import "../node_modules/font-awesome/css/font-awesome.min.css";
+
 ReactDOM.render(
   <BrowserRouter>
     <MuiThemeProvider>

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 // -----------COMPONENTS-----------
 import Navbar from "./components/Navbar/Navbar";
-import Timer from "./components/Timer/Timer";
+import View from "./components/View/View";
 
 // ----------CSS----------
 import "./App.css";
@@ -13,7 +13,7 @@ class App extends Component {
       <div>
         <div className="bg-image" />
         <Navbar />
-        <Timer className="timer-container" />
+        <View />
       </div>
     );
   }
