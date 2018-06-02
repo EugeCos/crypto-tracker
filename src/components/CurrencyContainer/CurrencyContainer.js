@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 
 // ---------MATERIAL UI---------
 import {
@@ -13,51 +14,118 @@ import {
 // ---------CSS---------
 import "./CurrencyContainer.css";
 
-const tableData = [
-  {
-    name: "BTC",
-    status: "7,446.09"
-  },
-  {
-    name: "XMR",
-    status: "156.58"
-  },
-  {
-    name: "AE",
-    status: "3.12"
-  },
-  {
-    name: "LTC",
-    status: "118.61"
-  }
-];
-
 export default class CurrencyContainer extends Component {
   constructor() {
     super();
     this.state = {
+      currencyArray: ["BTC", "AE", "LTC", "ANAL"],
       totalPortfolioValue: "0.00"
     };
   }
 
   getRates = () => {
-    let url =
-      "https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,JPY,EUR";
+    const { currencyArray } = this.state;
 
-    fetch(url)
-      .then(resp => console.log(resp.json()))
+    let newArray = "";
+    currencyArray.map(currency => {
+      return (newArray += `${currency},`);
+    });
+
+    let url = `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${newArray}&tsyms=USD`;
+
+    axios
+      .get(url)
+      .then(res => this.createExchangeRateObject(res.data))
       .catch(error => console.log(error));
   };
 
+  createExchangeRateObject = rates => {
+    let exchangeRates = [];
+    for (let cur in rates) {
+      exchangeRates.push({
+        name: cur,
+        rateToUSD: rates[cur].USD
+      });
+    }
+    this.setState(
+      {
+        exchangeRates
+      },
+      () => this.displayAvatars()
+    );
+  };
+
+  displayAvatars = () => {
+    const { exchangeRates, allCoins } = this.state;
+    let rates = Array.from(exchangeRates);
+
+    if (allCoins.length) {
+      exchangeRates.map((currency, index) => {
+        let coinIndex = allCoins.findIndex(coin => coin.name === currency.name);
+        rates[index].avatar = `https://www.cryptocompare.com${
+          allCoins[coinIndex].avatar
+        }`;
+        this.setState({
+          exchangeRates: rates
+        });
+      });
+    }
+  };
+
+  getAllCoinsAndAvatars = () => {
+    let coinListUrl =
+        "https://cors-anywhere.herokuapp.com/https://www.cryptocompare.com/api/data/coinlist/",
+      allCoins = [];
+
+    axios
+      .get(coinListUrl)
+      .then(res => {
+        for (let cur in res.data.Data) {
+          allCoins.push({
+            name: cur,
+            avatar: res.data.Data[cur].ImageUrl
+          });
+        }
+      })
+      .then(
+        this.setState({
+          allCoins
+        })
+      )
+      .catch(err => console.log(err));
+  };
+
   addCoin = () => {
-    console.log("Added a coin");
+    console.log("add coin");
   };
 
   componentWillMount() {
     this.getRates();
+    this.getAllCoinsAndAvatars();
   }
   render() {
-    const { totalPortfolioValue } = this.state;
+    const { totalPortfolioValue, exchangeRates } = this.state;
+    let tableContentJSX;
+    if (exchangeRates) {
+      tableContentJSX = exchangeRates.map((currency, index) => {
+        return (
+          <TableRow
+            className="table-row"
+            key={index}
+            displayBorder={false}
+            selectable={false}>
+            <TableRowColumn>
+              <div className="coin-container">
+                <img src={currency.avatar} className="coin-avatar" alt="" />
+                {currency.name}
+              </div>
+            </TableRowColumn>
+            <TableRowColumn>{index}</TableRowColumn>
+            <TableRowColumn>{currency.rateToUSD}</TableRowColumn>
+          </TableRow>
+        );
+      });
+    }
 
     return (
       <div className="currency-container">
@@ -88,19 +156,7 @@ export default class CurrencyContainer extends Component {
               <TableHeaderColumn tooltip="Coin Price">PRICE</TableHeaderColumn>
             </TableRow>
           </TableHeader>
-          <TableBody displayRowCheckbox={false}>
-            {tableData.map((row, index) => (
-              <TableRow
-                className="table-row"
-                key={index}
-                displayBorder={false}
-                selectable={false}>
-                <TableRowColumn>{row.name}</TableRowColumn>
-                <TableRowColumn>{index}</TableRowColumn>
-                <TableRowColumn>{row.status}</TableRowColumn>
-              </TableRow>
-            ))}
-          </TableBody>
+          <TableBody displayRowCheckbox={false}>{tableContentJSX}</TableBody>
         </Table>
         <hr />
         <div className="add-coin" onClick={this.addCoin}>
