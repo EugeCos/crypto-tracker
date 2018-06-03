@@ -10,6 +10,7 @@ import {
   TableRow,
   TableRowColumn
 } from "material-ui/Table";
+import Paper from "material-ui/Paper";
 
 // ---------CSS---------
 import "./CurrencyContainer.css";
@@ -47,19 +48,20 @@ export default class CurrencyContainer extends Component {
         rateToUSD: rates[cur].USD
       });
     }
-    this.setState(
-      {
-        exchangeRates
-      },
-      () => this.displayAvatars()
-    );
+    this.setState({
+      exchangeRates
+    });
   };
 
   displayAvatars = () => {
     const { exchangeRates, allCoins } = this.state;
-    let rates = Array.from(exchangeRates);
+    let rates;
 
-    if (allCoins.length) {
+    if (exchangeRates) {
+      rates = Array.from(exchangeRates);
+    }
+
+    if (allCoins.length && exchangeRates.length) {
       exchangeRates.map((currency, index) => {
         let coinIndex = allCoins.findIndex(coin => coin.name === currency.name);
         rates[index].avatar = `https://www.cryptocompare.com${
@@ -87,10 +89,13 @@ export default class CurrencyContainer extends Component {
           });
         }
       })
-      .then(
-        this.setState({
-          allCoins
-        })
+      .then(() =>
+        this.setState(
+          {
+            allCoins
+          },
+          () => this.displayAvatars()
+        )
       )
       .catch(err => console.log(err));
   };
@@ -128,7 +133,7 @@ export default class CurrencyContainer extends Component {
     }
 
     return (
-      <div className="currency-container">
+      <Paper className="currency-container" zDepth={5}>
         <h3>My Portfolio</h3>
         <hr />
         <div className="total-value-line">
@@ -163,7 +168,7 @@ export default class CurrencyContainer extends Component {
           <i className="fa fa-plus-circle" />
           <h4>ADD COIN</h4>
         </div>
-      </div>
+      </Paper>
     );
   }
 }
