@@ -1,19 +1,21 @@
 .navbar {
-    width: 100%;
-    height: 75px;
-    background-color: rgba(0, 0, 0, 0.596);
-    border-bottom: 1px solid rgb(127, 145, 144);
-    position: fixed;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    z-index: 15
+  width: 100%;
+  height: 75px;
+  background-color: rgba(0, 0, 0, 0.596);
+  border-bottom: 1px solid #7f9190;
+  position: fixed;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: end;
+      justify-content: flex-end;
+  -ms-flex-align: center;
+      align-items: center;
+  z-index: 15;
 }
-
-p {
-    font-size: 1.4rem;
-    text-transform: uppercase;
-    color: rgb(224, 224, 224);
-    padding: 0 50px;
-    text-shadow: 0 0 25px rgb(255, 255, 255)
+.navbar p {
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  color: #e0e0e0;
+  padding: 0 50px;
+  text-shadow: 0 0 25px #ffffff;
 }

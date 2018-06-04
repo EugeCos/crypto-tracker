@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "axios";
 
 // ---------MATERIAL UI---------
 import {
@@ -11,19 +10,24 @@ import {
   TableRowColumn
 } from "material-ui/Table";
 import Paper from "material-ui/Paper";
+import Dialog from "material-ui/Dialog";
 
 // ---------CSS---------
 import "./CurrencyContainer.css";
-import api from "../../api";
 
 // -----------FRONT-END API-----------
+import api from "../../api";
+
+// ----------COMPONENTS----------
+import AddCoinDialog from "../AddCoinDialog/AddCoinDialog";
 
 export default class CurrencyContainer extends Component {
   constructor() {
     super();
     this.state = {
       currencyArray: ["BTC", "AE", "LTC", "ANAL"],
-      totalPortfolioValue: "0.00"
+      totalPortfolioValue: "0.00",
+      dialogOpen: false
     };
   }
 
@@ -40,6 +44,7 @@ export default class CurrencyContainer extends Component {
     api
       .getRates(url)
       .then(res => {
+        console.log("here");
         if (res.status === 200) {
           this.createExchangeRateObject(res.data);
         }
@@ -92,7 +97,6 @@ export default class CurrencyContainer extends Component {
       .then(res => {
         if (res.status === 200) {
           for (let cur in res.data.Data) {
-            console.log(res.data.Data);
             allCoins.push({
               name: cur,
               coinName: res.data.Data[cur].CoinName,
@@ -112,8 +116,31 @@ export default class CurrencyContainer extends Component {
       .catch(err => console.log(err));
   };
 
-  addCoin = () => {
-    console.log("add coin");
+  handleDialogOpen = () => {
+    this.setState({
+      dialogOpen: true
+    });
+  };
+
+  handleDialogClose = () => {
+    this.setState({
+      dialogOpen: false
+    });
+  };
+
+  addCoin = newCoin => {
+    const { currencyArray } = this.state;
+
+    currencyArray.push(newCoin);
+
+    this.setState(
+      {
+        currencyArray
+      },
+      this.handleDialogClose(),
+      this.getRates(),
+      this.getAllCoinsAndAvatars()
+    );
   };
 
   componentWillMount() {
@@ -121,7 +148,18 @@ export default class CurrencyContainer extends Component {
     this.getAllCoinsAndAvatars();
   }
   render() {
-    const { totalPortfolioValue, exchangeRates } = this.state;
+    const {
+        totalPortfolioValue,
+        exchangeRates,
+        allCoins,
+        dialogOpen
+      } = this.state,
+      dialogStyle = {
+        background: "#2f3542",
+        color: "#fff",
+        fontFamily: "Quicksand"
+      };
+
     let tableContentJSX;
     if (exchangeRates) {
       tableContentJSX = exchangeRates.map((currency, index) => {
@@ -180,10 +218,22 @@ export default class CurrencyContainer extends Component {
           <TableBody displayRowCheckbox={false}>{tableContentJSX}</TableBody>
         </Table>
         <hr />
-        <div className="add-coin" onClick={this.addCoin}>
+        <div className="add-coin" onClick={this.handleDialogOpen}>
           <i className="fa fa-plus-circle" />
           <h4>ADD COIN</h4>
         </div>
+        <Dialog
+          title="Add a Coin"
+          modal={true}
+          open={dialogOpen}
+          titleStyle={dialogStyle}
+          bodyStyle={dialogStyle}>
+          <AddCoinDialog
+            allCoins={allCoins}
+            handleDialogClose={this.handleDialogClose}
+            addCoin={this.addCoin}
+          />
+        </Dialog>
       </Paper>
     );
   }

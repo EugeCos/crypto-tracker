@@ -1,0 +1,21 @@
+.d-flex {
+  display: -ms-flexbox;
+  display: flex;
+}
+.flex-row {
+  -ms-flex-direction: row;
+      flex-direction: row;
+}
+.flex-column {
+  -ms-flex-direction: column;
+      flex-direction: column;
+}
+.divider-5 {
+  width: 40%;
+}
+.divider-2 {
+  width: 20%;
+}
+.text-center {
+  text-align: center;
+}

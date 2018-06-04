@@ -1,0 +1,23 @@
+.dialog-content-wrapper {
+  margin: 0 20px 30px;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -ms-flex-align: center;
+      align-items: center;
+}
+.dialog-container {
+  height: auto;
+  min-height: 195px;
+}
+.dialog-container h3 {
+  margin-bottom: 30px;
+}
+.divider-2 h3 {
+  text-shadow: 0 0 25px #ffffff;
+}
+.buttons-wrapper {
+  width: 45%;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  margin: 0 auto;
+}
