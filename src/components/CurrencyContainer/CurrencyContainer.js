@@ -14,6 +14,9 @@ import Paper from "material-ui/Paper";
 
 // ---------CSS---------
 import "./CurrencyContainer.css";
+import api from "../../api";
+
+// -----------FRONT-END API-----------
 
 export default class CurrencyContainer extends Component {
   constructor() {
@@ -34,9 +37,13 @@ export default class CurrencyContainer extends Component {
 
     let url = `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${newArray}&tsyms=USD`;
 
-    axios
-      .get(url)
-      .then(res => this.createExchangeRateObject(res.data))
+    api
+      .getRates(url)
+      .then(res => {
+        if (res.status === 200) {
+          this.createExchangeRateObject(res.data);
+        }
+      })
       .catch(error => console.log(error));
   };
 
@@ -64,9 +71,10 @@ export default class CurrencyContainer extends Component {
     if (allCoins.length && exchangeRates.length) {
       exchangeRates.map((currency, index) => {
         let coinIndex = allCoins.findIndex(coin => coin.name === currency.name);
-        rates[index].avatar = `https://www.cryptocompare.com${
+        (rates[index].avatar = `https://www.cryptocompare.com${
           allCoins[coinIndex].avatar
-        }`;
+        }`),
+          (rates[index].coinName = allCoins[coinIndex].coinName);
         this.setState({
           exchangeRates: rates
         });
@@ -79,14 +87,18 @@ export default class CurrencyContainer extends Component {
         "https://cors-anywhere.herokuapp.com/https://www.cryptocompare.com/api/data/coinlist/",
       allCoins = [];
 
-    axios
-      .get(coinListUrl)
+    api
+      .getAllCoins(coinListUrl)
       .then(res => {
-        for (let cur in res.data.Data) {
-          allCoins.push({
-            name: cur,
-            avatar: res.data.Data[cur].ImageUrl
-          });
+        if (res.status === 200) {
+          for (let cur in res.data.Data) {
+            console.log(res.data.Data);
+            allCoins.push({
+              name: cur,
+              coinName: res.data.Data[cur].CoinName,
+              avatar: res.data.Data[cur].ImageUrl
+            });
+          }
         }
       })
       .then(() =>
@@ -125,6 +137,7 @@ export default class CurrencyContainer extends Component {
                 {currency.name}
               </div>
             </TableRowColumn>
+            <TableRowColumn>{currency.coinName}</TableRowColumn>
             <TableRowColumn>{index}</TableRowColumn>
             <TableRowColumn>{currency.rateToUSD}</TableRowColumn>
           </TableRow>
@@ -154,6 +167,9 @@ export default class CurrencyContainer extends Component {
             <TableRow>
               <TableHeaderColumn tooltip="Coin Name and Logo">
                 COIN
+              </TableHeaderColumn>
+              <TableHeaderColumn tooltip="Coin Full Name">
+                COIN FULL NAME
               </TableHeaderColumn>
               <TableHeaderColumn tooltip="Your Holdings">
                 HOLDINGS
