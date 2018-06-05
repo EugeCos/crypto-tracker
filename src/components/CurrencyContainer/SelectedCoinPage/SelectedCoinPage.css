@@ -1,28 +1,40 @@
-.selected-coin-wrapper {
-  padding: 25px;
+.selected-coin-container {
+  padding: 25px 0 40px;
 }
-.coin-profile-wrapper {
-  width: 35%;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-direction: row;
-      flex-direction: row;
+.coin-profile-container {
+  width: 50%;
+  margin-top: 20px;
 }
-.coin-profile-wrapper h2,
-.coin-profile-wrapper h4 {
+.coin-profile-container .coin-profile-wrapper {
+  float: right;
+}
+.coin-profile-container .coin-profile-wrapper h2,
+.coin-profile-container .coin-profile-wrapper h4 {
   margin: 4px 0 3px 20px;
 }
-.coin-profile-wrapper img {
+.coin-profile-container .coin-profile-wrapper img {
   width: 60px;
   height: auto;
   border-radius: 5px;
+}
+.coin-profile-container .coin-profile-wrapper .coin-data {
+  margin-top: 10px;
+}
+.coin-profile-container .coin-profile-wrapper .coin-data h4 {
+  margin: 3px 0;
+}
+.coin-profile-container .coin-profile-wrapper .coin-data .delete-coin {
+  margin-top: 60px;
+}
+.coin-profile-container .coin-profile-wrapper .coin-data .fa {
+  font-size: 120%;
 }
 .coin-trade-wrapper {
   width: 70%;
   text-align: center;
 }
-.coin-trade-wrapper h4 {
-  margin: 3px 0;
+.coin-trade-wrapper p {
+  margin-top: 0;
 }
 .buy-sell-wrapper {
   margin: 0;

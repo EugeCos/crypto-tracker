@@ -13,7 +13,10 @@ export default class SelectedCoinsPage extends Component {
     super();
     this.state = {
       optionSelected: "",
-      totalValue: 0
+      transaction: {
+        totalValue: 0,
+        numberOfCoins: 0
+      }
     };
   }
 
@@ -24,93 +27,114 @@ export default class SelectedCoinsPage extends Component {
   };
 
   handleChange = e => {
-    const { myCoins, index } = this.props;
-    let totalValue = e.target.value * myCoins[index].rateToUSD;
+    const { myCoins, index } = this.props,
+      { optionSelected } = this.state;
+    let totalValue = e.target.value * myCoins[index].rateToUSD,
+      numberOfCoins = e.target.value;
+
+    if (optionSelected === "SELL") {
+      numberOfCoins = -Math.abs(e.target.value);
+    }
+
     this.setState({
-      totalValue
+      transaction: {
+        totalValue,
+        numberOfCoins
+      }
     });
   };
 
   render() {
-    const { optionSelected, totalValue } = this.state,
+    const { optionSelected, transaction } = this.state,
+      { totalValue } = transaction,
       { myCoins, tradeCoins, selectCoin, index } = this.props;
     let coin = myCoins[index],
       totalVal = totalValue.toLocaleString(
         "en",
         { minimumFractionDigits: 2 }
-      );
+      ),
+      optionEmpty = optionSelected.length ? false : true;
 
     return (
       <div>
         <hr />
-        <div className="selected-coin-wrapper">
-          <div className="d-flex flex-row">
+        <div className="d-flex flex-row selected-coin-container">
+          <div className="coin-profile-container">
             <div className="coin-profile-wrapper">
-              <div className="divider-6">
-                <img src={coin.avatar} alt="coin-image" />
+              <div className="d-flex">
+                <div className="divider-6">
+                  <img src={coin.avatar} alt="coin-image" />
+                </div>
+                <div className="divider-6">
+                  <h2>{coin.coinName}</h2>
+                  <h4>{coin.name}</h4>
+                </div>
               </div>
-              <div className="divider-6">
-                <h2>{coin.coinName}</h2>
-                <h4>{coin.name}</h4>
+              <div className="d-flex flex-column coin-data">
+                <h4>Trading pair:&nbsp;{coin.name}&nbsp;/&nbsp;USD</h4>
+                <h4>Current price:&nbsp;$&nbsp;{coin.rateToUSD}&nbsp;USD</h4>
+                <span className="delete-coin">
+                  <h4>
+                    <i className="fa fa-trash-o" />&nbsp;&nbsp;Delete Coin
+                  </h4>
+                </span>
               </div>
             </div>
-            <div className="coin-trade-wrapper">
-              <h4>Trading pair:&nbsp;{coin.name}&nbsp;/&nbsp;USD</h4>
-              <h4>Current price:&nbsp;${coin.rateToUSD}&nbsp;USD</h4>
-              <hr style={{ width: "50%", margin: "16px auto" }} />
-              <div className="d-flex flex-row buy-sell-wrapper">
-                <h3
-                  className={`buy ${
-                    optionSelected === "BUY" ? "selected" : ""
-                  }`}
-                  onClick={() => this.selectOption("BUY")}>
-                  BUY
-                </h3>
-                <h3
-                  className={`sell ${
-                    optionSelected === "SELL" ? "selected" : ""
-                  }`}
-                  onClick={() => this.selectOption("SELL")}>
-                  SELL
-                </h3>
-              </div>
-              <div className="d-flex flex-row quantity-wrapper">
-                <TextField
-                  style={{ width: "130px", textAlign: "center" }}
-                  hintStyle={{
-                    color: "#a4b0be",
-                    fontFamily: "Quicksand",
-                    fontSize: "14px"
-                  }}
-                  inputStyle={{
-                    color: "#fff",
-                    fontFamily: "Quicksand",
-                    fontSize: "14px",
-                    textAlign: "center"
-                  }}
-                  hintText="Enter Quantity"
-                  onChange={e => this.handleChange(e)}
-                />
-              </div>
-              <div className="d-flex flex-row quantity-wrapper">
-                <p>Total value:</p>
-                <p>{totalVal}</p>
-              </div>
+          </div>
+          <div className="coin-trade-wrapper">
+            <p>Choose an option:</p>
+            <div className="d-flex flex-row buy-sell-wrapper">
+              <h3
+                className={`buy ${optionSelected === "BUY" ? "selected" : ""}`}
+                onClick={() => this.selectOption("BUY")}>
+                BUY
+              </h3>
+              <h3
+                className={`sell ${
+                  optionSelected === "SELL" ? "selected" : ""
+                }`}
+                onClick={() => this.selectOption("SELL")}>
+                SELL
+              </h3>
+            </div>
+            <hr style={{ width: "50%", margin: "16px auto" }} />
+            <div className="d-flex flex-row quantity-wrapper">
+              <TextField
+                style={{ width: "130px", textAlign: "center" }}
+                hintStyle={{
+                  color: "#a4b0be",
+                  fontFamily: "Quicksand",
+                  fontSize: "14px"
+                }}
+                inputStyle={{
+                  color: "#fff",
+                  fontFamily: "Quicksand",
+                  fontSize: "14px",
+                  textAlign: "center"
+                }}
+                hintText="Enter Quantity"
+                onChange={e => this.handleChange(e)}
+              />
+            </div>
+            <div className="d-flex flex-row quantity-wrapper">
+              <p>Total value:</p>
+              <p>{`$ ${totalVal} USD`}</p>
+            </div>
 
-              <div className="buttons-wrapper d-flex flex-row">
-                <RaisedButton
-                  buttonStyle={{ backgroundColor: "#636e72", width: "130px" }}
-                  label="Return"
-                  primary={true}
-                  onClick={selectCoin}
-                />
-                <RaisedButton
-                  buttonStyle={{ backgroundColor: "#e67e22", width: "130px" }}
-                  label="Confirm"
-                  primary={true}
-                  onClick={() => tradeCoins()}
-                />
-              </div>
+            <div className="buttons-wrapper d-flex flex-row">
+              <RaisedButton
+                buttonStyle={{ backgroundColor: "#636e72", width: "130px" }}
+                label="Return"
+                primary={true}
+                onClick={selectCoin}
+              />
+              <RaisedButton
+                buttonStyle={{ backgroundColor: "#e67e22", width: "130px" }}
+                disabled={optionEmpty}
+                label="Confirm"
+                primary={true}
+                onClick={() => tradeCoins(transaction)}
+              />
             </div>
           </div>
         </div>

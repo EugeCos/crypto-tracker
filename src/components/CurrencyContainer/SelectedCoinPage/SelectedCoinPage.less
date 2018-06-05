@@ -1,30 +1,40 @@
 @import "../../../css/export.less";
 
-.selected-coin-wrapper{
-    padding: 25px;
+.selected-coin-container{
+    padding: 25px 0 40px;
 }
 
-.coin-profile-wrapper{
-    width: 35%;
-    display: flex;
-    flex-direction: row;
+.coin-profile-container{
+    width: 50%;    
+    margin-top: 20px;
 
-    h2, h4{margin: 4px 0 3px 20px}
+    .coin-profile-wrapper{
+        float: right;
 
-    img{ 
-        width: 60px;
-        height: auto;
-        border-radius: 5px
-    }    
+        h2, h4{margin: 4px 0 3px 20px}
+
+        img{ 
+            width: 60px;
+            height: auto;
+            border-radius: 5px
+        }   
+        
+        .coin-data{
+            margin-top: 10px;
+
+            h4{ margin: 3px 0 }
+
+            .delete-coin{ margin-top: 60px }
+            .fa{ font-size: 120% }
+        }
+    }  
 }
 
 .coin-trade-wrapper{
     width: 70%;
-    text-align: center;
-
-    h4{
-        margin: 3px 0;
-    }
+    text-align: center;  
+    
+    p{ margin-top: 0 }
 }
 
 .buy-sell-wrapper{

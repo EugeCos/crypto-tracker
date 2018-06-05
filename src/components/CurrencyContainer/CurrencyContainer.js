@@ -28,7 +28,7 @@ export default class CurrencyContainer extends Component {
     super();
     this.state = {
       currencyArray: ["BTC", "AE", "LTC", "ANAL"],
-      totalPortfolioValue: 50000,
+      totalPortfolioValue: 0,
       dialogOpen: false,
       allCoins: [],
       exchangeRates: [],
@@ -155,9 +155,15 @@ export default class CurrencyContainer extends Component {
     );
   };
 
-  tradeCoins = () => {
+  tradeCoins = transaction => {
+    const { totalPortfolioValue } = this.state,
+      { numberOfCoins, totalValue } = transaction;
+
+    let updatedPortfolio = totalPortfolioValue + numberOfCoins * totalValue;
+
     this.setState({
-      selectedCoin: false
+      selectedCoin: false,
+      totalPortfolioValue: updatedPortfolio
     });
   };
 
