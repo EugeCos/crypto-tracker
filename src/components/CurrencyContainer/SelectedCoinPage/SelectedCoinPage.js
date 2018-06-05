@@ -133,7 +133,7 @@ export default class SelectedCoinsPage extends Component {
                 disabled={optionEmpty}
                 label="Confirm"
                 primary={true}
-                onClick={() => tradeCoins(transaction)}
+                onClick={() => tradeCoins(transaction, index)}
               />
             </div>
           </div>

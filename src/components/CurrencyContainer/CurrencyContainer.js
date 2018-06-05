@@ -32,6 +32,7 @@ export default class CurrencyContainer extends Component {
       dialogOpen: false,
       allCoins: [],
       exchangeRates: [],
+      holdings: [],
       selectedCoin: false,
       selectedCoinIndex: 0
     };
@@ -64,7 +65,9 @@ export default class CurrencyContainer extends Component {
     for (let cur in rates) {
       exchangeRates.push({
         name: cur,
-        rateToUSD: rates[cur].USD
+        rateToUSD: rates[cur].USD,
+        numberOfCoins: 0,
+        totalValue: 0
       });
     }
     this.setState(
@@ -155,15 +158,20 @@ export default class CurrencyContainer extends Component {
     );
   };
 
-  tradeCoins = transaction => {
-    const { totalPortfolioValue } = this.state,
+  tradeCoins = (transaction, index) => {
+    const { totalPortfolioValue, exchangeRates } = this.state,
       { numberOfCoins, totalValue } = transaction;
 
     let updatedPortfolio = totalPortfolioValue + numberOfCoins * totalValue;
 
+    let newRatesArray = Array.from(exchangeRates);
+    (newRatesArray[index].numberOfCoins = numberOfCoins),
+      (newRatesArray[index].totalValue = totalValue);
+
     this.setState({
       selectedCoin: false,
-      totalPortfolioValue: updatedPortfolio
+      totalPortfolioValue: updatedPortfolio,
+      exchangeRates: newRatesArray
     });
   };
 
@@ -209,6 +217,14 @@ export default class CurrencyContainer extends Component {
     let tableContentJSX, selectedCoinJSX;
     if (exchangeRates) {
       tableContentJSX = exchangeRates.map((currency, index) => {
+        let holdingJSX =
+          currency.numberOfCoins === 0 ? (
+            0
+          ) : (
+            <span>{`${currency.numberOfCoins} coins / $ ${
+              currency.totalValue
+            }`}</span>
+          );
         return (
           <TableRow
             className="table-row"
@@ -222,7 +238,7 @@ export default class CurrencyContainer extends Component {
               </div>
             </TableRowColumn>
             <TableRowColumn>{currency.coinName}</TableRowColumn>
-            <TableRowColumn>{index}</TableRowColumn>
+            <TableRowColumn>{holdingJSX}</TableRowColumn>
             <TableRowColumn>{currency.rateToUSD}</TableRowColumn>
             <TableRowColumn className="buy-sell-button">
               <i
