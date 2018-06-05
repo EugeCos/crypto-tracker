@@ -19,6 +19,8 @@ import "./CurrencyContainer.css";
 import api from "../../api";
 
 // ----------COMPONENTS----------
+import CurrencyTable from "./CurrencyTable/CurrencyTable";
+import SelectedCoinPage from "./SelectedCoinPage/SelectedCoinPage";
 import AddCoinDialog from "../AddCoinDialog/AddCoinDialog";
 
 export default class CurrencyContainer extends Component {
@@ -26,10 +28,12 @@ export default class CurrencyContainer extends Component {
     super();
     this.state = {
       currencyArray: ["BTC", "AE", "LTC", "ANAL"],
-      totalPortfolioValue: "0.00",
+      totalPortfolioValue: 50000,
       dialogOpen: false,
       allCoins: [],
-      exchangeRates: []
+      exchangeRates: [],
+      selectedCoin: false,
+      selectedCoinIndex: 0
     };
   }
 
@@ -151,6 +155,22 @@ export default class CurrencyContainer extends Component {
     );
   };
 
+  tradeCoins = () => {
+    this.setState({
+      selectedCoin: false
+    });
+  };
+
+  selectCoin = index => {
+    const { allCoins } = this.state;
+    if (allCoins.length) {
+      this.setState({
+        selectedCoin: !this.state.selectedCoin,
+        selectedCoinIndex: index
+      });
+    }
+  };
+
   componentWillMount() {
     this.getRates();
     this.getAllCoinsAndAvatars();
@@ -165,7 +185,9 @@ export default class CurrencyContainer extends Component {
         totalPortfolioValue,
         exchangeRates,
         allCoins,
-        dialogOpen
+        dialogOpen,
+        selectedCoin,
+        selectedCoinIndex
       } = this.state,
       dialogStyle = {
         background: "#2f3542",
@@ -173,7 +195,12 @@ export default class CurrencyContainer extends Component {
         fontFamily: "Quicksand"
       };
 
-    let tableContentJSX;
+    let portfolio = totalPortfolioValue.toLocaleString(
+      "en",
+      { minimumFractionDigits: 2 }
+    );
+
+    let tableContentJSX, selectedCoinJSX;
     if (exchangeRates) {
       tableContentJSX = exchangeRates.map((currency, index) => {
         return (
@@ -191,10 +218,31 @@ export default class CurrencyContainer extends Component {
             <TableRowColumn>{currency.coinName}</TableRowColumn>
             <TableRowColumn>{index}</TableRowColumn>
             <TableRowColumn>{currency.rateToUSD}</TableRowColumn>
+            <TableRowColumn className="buy-sell-button">
+              <i
+                className="fa fa-plus"
+                onClick={() => this.selectCoin(index)}
+              />
+            </TableRowColumn>
           </TableRow>
         );
       });
     }
+
+    selectedCoinJSX = selectedCoin ? (
+      <SelectedCoinPage
+        myCoins={exchangeRates}
+        tradeCoins={this.tradeCoins}
+        selectCoin={this.selectCoin}
+        index={selectedCoinIndex}
+      />
+    ) : (
+      <CurrencyTable
+        handleDialogOpen={this.handleDialogOpen}
+        tableContentJSX={tableContentJSX}
+        addCoin={this.addCoin}
+      />
+    );
 
     return (
       <Paper className="currency-container" zDepth={5}>
@@ -202,39 +250,12 @@ export default class CurrencyContainer extends Component {
         <hr />
         <div className="total-value-line">
           <h4>
-            Total Portfolio Value:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${
-              totalPortfolioValue
-            }
-            &nbsp;Usd
+            Total Portfolio Value:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>
+              $&nbsp;{portfolio}&nbsp;Usd
+            </strong>
           </h4>
         </div>
-        <Table style={{ backgroundColor: "#333", borderCollapse: "separate" }}>
-          <TableHeader
-            style={{
-              backgroundColor: "rgb(24, 24, 24)"
-            }}
-            adjustForCheckbox={false}
-            displaySelectAll={false}>
-            <TableRow>
-              <TableHeaderColumn tooltip="Coin Name and Logo">
-                COIN
-              </TableHeaderColumn>
-              <TableHeaderColumn tooltip="Coin Full Name">
-                COIN FULL NAME
-              </TableHeaderColumn>
-              <TableHeaderColumn tooltip="Your Holdings">
-                HOLDINGS
-              </TableHeaderColumn>
-              <TableHeaderColumn tooltip="Coin Price">PRICE</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody displayRowCheckbox={false}>{tableContentJSX}</TableBody>
-        </Table>
-        <hr />
-        <div className="add-coin" onClick={this.handleDialogOpen}>
-          <i className="fa fa-plus-circle" />
-          <h4>ADD COIN</h4>
-        </div>
+        {selectedCoinJSX}
         <Dialog
           title="Add a Coin"
           modal={true}

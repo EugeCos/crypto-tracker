@@ -1,0 +1,78 @@
+.selected-coin-wrapper {
+  padding: 25px;
+}
+.coin-profile-wrapper {
+  width: 35%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: row;
+      flex-direction: row;
+}
+.coin-profile-wrapper h2,
+.coin-profile-wrapper h4 {
+  margin: 4px 0 3px 20px;
+}
+.coin-profile-wrapper img {
+  width: 60px;
+  height: auto;
+  border-radius: 5px;
+}
+.coin-trade-wrapper {
+  width: 70%;
+  text-align: center;
+}
+.coin-trade-wrapper h4 {
+  margin: 3px 0;
+}
+.buy-sell-wrapper {
+  margin: 0;
+  -ms-flex-pack: center;
+      justify-content: center;
+}
+.buy-sell-wrapper .buy {
+  margin: 10px 40px 10px 0;
+}
+.buy-sell-wrapper .sell {
+  margin: 10px 0 10px 40px;
+}
+.buy-sell-wrapper .selected {
+  font-weight: 600;
+  background-image: linear-gradient(to right, cyan, #00ccff);
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  background-size: 100% 2px;
+  text-shadow: 0 0 25px cyan;
+  transition: text-shadow 0.1s, font-weight 0.1s;
+}
+.buy-sell-wrapper h3 {
+  position: relative;
+  color: #fff;
+  padding-bottom: 3px;
+}
+.buy-sell-wrapper h3:hover {
+  color: #fff;
+  cursor: pointer;
+}
+.buy-sell-wrapper h3:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: cyan;
+  visibility: hidden;
+  transform: scaleX(0);
+  transition: all 0.2s ease-in-out 0s;
+}
+.buy-sell-wrapper h3:hover:before {
+  visibility: visible;
+  transform: scaleX(1);
+}
+.quantity-wrapper {
+  -ms-flex-pack: center;
+      justify-content: center;
+}
+.quantity-wrapper p {
+  margin: 20px 20px 40px 0;
+}

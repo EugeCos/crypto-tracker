@@ -54,3 +54,8 @@ hr {
 .table-row:hover {
   background-color: #414141;
 }
+.buy-sell-button .fa {
+  font-size: 140%;
+  margin-left: 25px;
+  cursor: pointer;
+}
