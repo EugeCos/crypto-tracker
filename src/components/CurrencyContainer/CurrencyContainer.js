@@ -27,7 +27,9 @@ export default class CurrencyContainer extends Component {
     this.state = {
       currencyArray: ["BTC", "AE", "LTC", "ANAL"],
       totalPortfolioValue: "0.00",
-      dialogOpen: false
+      dialogOpen: false,
+      allCoins: [],
+      exchangeRates: []
     };
   }
 
@@ -44,7 +46,6 @@ export default class CurrencyContainer extends Component {
     api
       .getRates(url)
       .then(res => {
-        console.log("here");
         if (res.status === 200) {
           this.createExchangeRateObject(res.data);
         }
@@ -53,22 +54,26 @@ export default class CurrencyContainer extends Component {
   };
 
   createExchangeRateObject = rates => {
-    let exchangeRates = [];
+    let exchangeRates = [],
+      historicRates = [];
+
     for (let cur in rates) {
       exchangeRates.push({
         name: cur,
         rateToUSD: rates[cur].USD
       });
     }
-    this.setState({
-      exchangeRates
-    });
+    this.setState(
+      {
+        exchangeRates
+      },
+      () => this.displayAvatars()
+    );
   };
 
   displayAvatars = () => {
     const { exchangeRates, allCoins } = this.state;
     let rates;
-
     if (exchangeRates) {
       rates = Array.from(exchangeRates);
     }
@@ -117,9 +122,12 @@ export default class CurrencyContainer extends Component {
   };
 
   handleDialogOpen = () => {
-    this.setState({
-      dialogOpen: true
-    });
+    const { allCoins } = this.state;
+    if (allCoins.length) {
+      this.setState({
+        dialogOpen: true
+      });
+    }
   };
 
   handleDialogClose = () => {
@@ -139,7 +147,7 @@ export default class CurrencyContainer extends Component {
       },
       this.handleDialogClose(),
       this.getRates(),
-      this.getAllCoinsAndAvatars()
+      this.displayAvatars()
     );
   };
 
@@ -147,6 +155,11 @@ export default class CurrencyContainer extends Component {
     this.getRates();
     this.getAllCoinsAndAvatars();
   }
+
+  componentDidMount() {
+    setInterval(() => this.getRates(), 10000);
+  }
+
   render() {
     const {
         totalPortfolioValue,
