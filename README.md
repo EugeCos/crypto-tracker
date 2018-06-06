@@ -36,6 +36,12 @@ for coin full names and avatars
 - Font Awesome - fonts
 - Moment - date and time display
 
+---
+
+## Timeline
+
+June 1 - June 5, 2018
+
 ## Contributors
 
 - Eugene Costov // eugene.costov@gmail.com
