@@ -4,9 +4,9 @@ A serverless web-app that allows users to look up cryptocurrencies and perform b
 
 ## Installation
 
-$ git clone https://github.com/EugeCos/crypto-tracker.git \_
-$ cd PROJECT**
-$ npm install**
+$ git clone https://github.com/EugeCos/crypto-tracker.git <br />
+$ cd PROJECT <br />
+$ npm install
 
 ## Start & watch
 
@@ -18,10 +18,10 @@ $ npm run build
 
 ## API Reference
 
-https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,XMR,ZEC&tsyms=USD \_\_
+https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,XMR,ZEC&tsyms=USD <br />
 for currency rates
 
-https://cors-anywhere.herokuapp.com/https://www.cryptocompare.com/api/data/coinlist/ \_\_
+https://cors-anywhere.herokuapp.com/https://www.cryptocompare.com/api/data/coinlist/ <br />
 for coin full names and avatars
 
 ---
@@ -38,7 +38,7 @@ for coin full names and avatars
 
 ## Contributors
 
-- Eugene Costov <mailto:eugene.costov@gmail.com>
+- Eugene Costov eugene.costov@gmail.com
 
 ## License & copyright
 
