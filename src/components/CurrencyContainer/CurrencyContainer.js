@@ -27,7 +27,7 @@ export default class CurrencyContainer extends Component {
   constructor() {
     super();
     this.state = {
-      currencyArray: ["BTC", "AE", "LTC", "ANAL"],
+      currencyArray: ["BTC", "ETH", "XMR", "ZEC"],
       totalPortfolioValue: 0,
       dialogOpen: false,
       allCoins: [],
