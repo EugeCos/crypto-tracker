@@ -59,20 +59,33 @@ export default class CurrencyContainer extends Component {
   };
 
   createExchangeRateObject = rates => {
-    let exchangeRates = [],
-      historicRates = [];
+    let exchangeRates = [];
 
     for (let cur in rates) {
       exchangeRates.push({
         name: cur,
-        rateToUSD: rates[cur].USD,
-        numberOfCoins: 0,
-        totalValue: 0
+        rateToUSD: rates[cur].USD
       });
     }
+
+    this.setState({ exchangeRates }, () => this.createHoldings());
+  };
+
+  createHoldings = () => {
+    const { holdings, exchangeRates } = this.state;
+
+    if (holdings.length === 0) {
+      for (let i = 0; i < exchangeRates.length; i++) {
+        holdings.push({
+          numberOfCoins: 0,
+          totalValue: 0
+        });
+      }
+    }
+
     this.setState(
       {
-        exchangeRates
+        holdings
       },
       () => this.displayAvatars()
     );
@@ -144,13 +157,19 @@ export default class CurrencyContainer extends Component {
   };
 
   addCoin = newCoin => {
-    const { currencyArray } = this.state;
+    const { currencyArray, holdings } = this.state;
 
     currencyArray.push(newCoin);
 
+    holdings.push({
+      numberOfCoins: 0,
+      totalValue: 0
+    });
+
     this.setState(
       {
-        currencyArray
+        currencyArray,
+        holdings
       },
       this.handleDialogClose(),
       this.getRates(),
@@ -159,19 +178,22 @@ export default class CurrencyContainer extends Component {
   };
 
   tradeCoins = (transaction, index) => {
-    const { totalPortfolioValue, exchangeRates } = this.state,
+    const { totalPortfolioValue, holdings } = this.state,
       { numberOfCoins, totalValue } = transaction;
 
-    let updatedPortfolio = totalPortfolioValue + numberOfCoins * totalValue;
+    let updatedPortfolio = totalPortfolioValue + totalValue,
+      updatedHoldings;
 
-    let newRatesArray = Array.from(exchangeRates);
-    (newRatesArray[index].numberOfCoins = numberOfCoins),
-      (newRatesArray[index].totalValue = totalValue);
+    if (holdings.length) {
+      updatedHoldings = Array.from(holdings);
+      (updatedHoldings[index].numberOfCoins += numberOfCoins),
+        (updatedHoldings[index].totalValue += totalValue);
+    }
 
     this.setState({
       selectedCoin: false,
       totalPortfolioValue: updatedPortfolio,
-      exchangeRates: newRatesArray
+      holdings: updatedHoldings
     });
   };
 
@@ -183,6 +205,17 @@ export default class CurrencyContainer extends Component {
         selectedCoinIndex: index
       });
     }
+  };
+
+  deleteCoin = index => {
+    const { currencyArray, dialogOpen } = this.state;
+    currencyArray.splice(index, 1);
+    this.setState(
+      {
+        currencyArray
+      },
+      () => this.getRates()
+    );
   };
 
   componentWillMount() {
@@ -198,6 +231,7 @@ export default class CurrencyContainer extends Component {
     const {
         totalPortfolioValue,
         exchangeRates,
+        holdings,
         allCoins,
         dialogOpen,
         selectedCoin,
@@ -209,22 +243,24 @@ export default class CurrencyContainer extends Component {
         fontFamily: "Quicksand"
       };
 
-    let portfolio = totalPortfolioValue.toLocaleString(
-      "en",
-      { minimumFractionDigits: 2 }
-    );
+    let portfolio = totalPortfolioValue.toFixed(2);
 
-    let tableContentJSX, selectedCoinJSX;
+    let tableContentJSX, selectedCoinJSX, holdingJSX;
     if (exchangeRates) {
       tableContentJSX = exchangeRates.map((currency, index) => {
-        let holdingJSX =
-          currency.numberOfCoins === 0 ? (
-            0
-          ) : (
-            <span>{`${currency.numberOfCoins} coins / $ ${
-              currency.totalValue
-            }`}</span>
-          );
+        if (holdings.length) {
+          holdingJSX =
+            holdings[index].numberOfCoins === 0 ? (
+              0
+            ) : (
+              <span>{`${holdings[index].numberOfCoins} ${
+                holdings[index].numberOfCoins === 1 ? "coin" : "coins"
+              } / $ ${holdings[index].totalValue.toFixed(2)}`}</span>
+            );
+        } else {
+          holdingJSX = 0;
+        }
+
         return (
           <TableRow
             className="table-row"
@@ -246,6 +282,12 @@ export default class CurrencyContainer extends Component {
                 onClick={() => this.selectCoin(index)}
               />
             </TableRowColumn>
+            <TableRowColumn className="delete-button">
+              <i
+                className="fa fa-trash-o"
+                onClick={() => this.deleteCoin(index)}
+              />
+            </TableRowColumn>
           </TableRow>
         );
       });
@@ -257,6 +299,7 @@ export default class CurrencyContainer extends Component {
         tradeCoins={this.tradeCoins}
         selectCoin={this.selectCoin}
         index={selectedCoinIndex}
+        deleteCoin={this.deleteCoin}
       />
     ) : (
       <CurrencyTable

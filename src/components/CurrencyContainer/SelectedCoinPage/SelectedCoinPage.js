@@ -30,10 +30,11 @@ export default class SelectedCoinsPage extends Component {
     const { myCoins, index } = this.props,
       { optionSelected } = this.state;
     let totalValue = e.target.value * myCoins[index].rateToUSD,
-      numberOfCoins = e.target.value;
+      numberOfCoins = parseInt(e.target.value);
 
     if (optionSelected === "SELL") {
       numberOfCoins = -Math.abs(e.target.value);
+      totalValue = numberOfCoins * myCoins[index].rateToUSD;
     }
 
     this.setState({
@@ -47,7 +48,7 @@ export default class SelectedCoinsPage extends Component {
   render() {
     const { optionSelected, transaction } = this.state,
       { totalValue } = transaction,
-      { myCoins, tradeCoins, selectCoin, index } = this.props;
+      { myCoins, tradeCoins, selectCoin, deleteCoin, index } = this.props;
     let coin = myCoins[index],
       totalVal = totalValue.toLocaleString(
         "en",
@@ -73,11 +74,6 @@ export default class SelectedCoinsPage extends Component {
               <div className="d-flex flex-column coin-data">
                 <h4>Trading pair:&nbsp;{coin.name}&nbsp;/&nbsp;USD</h4>
                 <h4>Current price:&nbsp;$&nbsp;{coin.rateToUSD}&nbsp;USD</h4>
-                <span className="delete-coin">
-                  <h4>
-                    <i className="fa fa-trash-o" />&nbsp;&nbsp;Delete Coin
-                  </h4>
-                </span>
               </div>
             </div>
           </div>

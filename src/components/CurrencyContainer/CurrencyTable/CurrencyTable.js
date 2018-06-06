@@ -36,6 +36,9 @@ export default class CurrencyTable extends Component {
               <TableHeaderColumn tooltip="Trade Coins">
                 BUY / SELL
               </TableHeaderColumn>
+              <TableHeaderColumn tooltip="Delete Coin">
+                DELETE COIN
+              </TableHeaderColumn>
             </TableRow>
           </TableHeader>
           <TableBody displayRowCheckbox={false}>{tableContentJSX}</TableBody>

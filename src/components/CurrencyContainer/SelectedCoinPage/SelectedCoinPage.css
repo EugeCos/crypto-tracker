@@ -23,12 +23,6 @@
 .coin-profile-container .coin-profile-wrapper .coin-data h4 {
   margin: 3px 0;
 }
-.coin-profile-container .coin-profile-wrapper .coin-data .delete-coin {
-  margin-top: 60px;
-}
-.coin-profile-container .coin-profile-wrapper .coin-data .fa {
-  font-size: 120%;
-}
 .coin-trade-wrapper {
   width: 70%;
   text-align: center;

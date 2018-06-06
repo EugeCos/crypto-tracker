@@ -47,6 +47,7 @@ hr {
 
 .coin-avatar {
     width: 28px;
+    border-radius: 3px;
     height: auto;
     margin-right: 12px
 }
@@ -60,10 +61,15 @@ hr {
     background-color: rgb(65, 65, 65)
 }
 
-.buy-sell-button{
+.buy-sell-button, .delete-button{
     .fa{ 
         font-size: 140%; 
         margin-left: 25px;
-        cursor: pointer
+        cursor: pointer;
+        transition: color 0.15s ease-in-out;
+
+            &:hover{ 
+                color: rgb(132, 225, 253);
+            }
     }
 }
