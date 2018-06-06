@@ -38,7 +38,7 @@ for coin full names and avatars
 
 ## Contributors
 
-- Eugene Costov eugene.costov@gmail.com
+- Eugene Costov // eugene.costov@gmail.com
 
 ## License & copyright
 
